@@ -1,4 +1,4 @@
-# Sprint Boot 连接 RabbitMQ 发布消息
+# Sprint Boot 连接 RabbitMQ 发布/接收消息
 
 ### 背景
 
@@ -21,32 +21,6 @@ spring:
 ```
 `virtual-host` 一定要填，不然会找不到具体的 MQ 实例
 
-- 添加配置代码
-
-  - 其实也可以用 `@SpringBootConfiguration`
-  - 每个都要加上 `@Bean` 代表由 Spring 进行管理，这样才能生效
-
-```groovy
-@Configuration
-class CustomRabbitConfig {
-
-    @Bean
-    Queue directQueue(){
-        return new Queue('q名字')
-    }
-
-    @Bean
-    DirectExchange topicExchange(){
-        return new DirectExchange('exchange名字')
-    }
-
-    @Bean
-    Binding binding(Queue q, DirectExchange d){
-        return BindingBuilder.bind(q).to(d).with('routingKey名字')
-    }
-}
-```
-
 
 - 最终发送消息的代码这样
 
@@ -65,6 +39,11 @@ class MQSender {
 }
 ```
 
-**感觉这样有点问题，首先是具体send的时候还需要重复填写exchange和routingKey不太合理，另外，如果是多个队列这样就不合适了**
+### 接收消息
 
-留个坑，以后填
+- 配置文件
+
+```yml
+spring:
+  rabbitmq:
+```
