@@ -78,3 +78,6 @@ class HouseDataLinstener {
   - `exchange` 和 `queue` 是通过 `routingKey` 绑定的
   - 通过相同的 `routingKey` 可以绑定多个 `queue` 到一个 `exchange` 上
   - 这样发消息的时候，指定一个 `exchange` 和 `routingKey` 就可以向多个 `queue` 发送消息
+
+
+[回到目录](README.md)
