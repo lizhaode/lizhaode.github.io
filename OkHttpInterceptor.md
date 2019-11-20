@@ -50,5 +50,46 @@ class CustomFeignConfig {
 老规矩，先放代码
 
 ```groovy
+class RandomIPAndUA {
 
+    static String getIp() {
+        Random r = new Random()
+        return String.format("%d.%d.%d.%d",
+                r.nextInt(255), r.nextInt(255), r.nextInt(255), r.nextInt(255))
+    }
+
+    static String getUA() {
+        Random r = new Random()
+        return UAList[r.nextInt(UAList.size())]
+    }
+    // 避免长度问题，只放上来几个
+    private static List<String> UAList = [
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.1 Safari/537.36",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36",
+    ]
+}
 ```
+
+先写一个动态生成 UA 和 IP 的方法
+
+```groovy
+class HeaderInterceptor implements Interceptor {
+
+        @Override
+        Response intercept(@NotNull Chain chain) throws IOException {
+            Request request = chain.request()
+            Request newRequest = request.newBuilder().removeHeader('Cookie').addHeader('Accept-Language', 'zh-CN,zh;q=0.9')
+                    .addHeader('User-Agent', RandomIPAndUA.getUA())
+                    .addHeader('REMOTE_ADDR', RandomIPAndUA.getIp()).build()
+            return chain.proceed(newRequest)
+        }
+    }
+```
+
+然后写一个实现 OkHttp 的 interceptor 接口的类，实现他的 intercept 方法就行了
+
+在这个方法里，可以修改 Request 也可以修改 Response
+
+然后在 OkHttp Client 中加上自己的拦截器就生效了
+
+[回到目录](README.md)
