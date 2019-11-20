@@ -1,6 +1,6 @@
 # 关于 OkHttp3 上 interceptor 的一些整理
 
-## 背景
+### 背景
 
 在 Spring Cloud 中一般会使用 Feign 来发送 http 请求，发现他可以自定义 client ，官方也提供了 OkHttp 作为 client
 
@@ -9,7 +9,7 @@ OkHttp 官方提供了非常好用的 log 打印工具 `logging-interceptor`
 在爬一些网站的时候，也需要自定义一些 Request Header ，比如 `User-Agent`, `X-Forwarded-For`, `REMOTE_ADDR` 等等(这些头的作用等到爬虫的帖子再说)
 
 
-## 使用官方提供的 log 打印请求
+### 使用官方提供的 log 打印请求
 
 ```groovy
 @Slf4j
@@ -40,12 +40,12 @@ class CustomFeignConfig {
 
 - OkHttp 除了自定义的拦截器之外，还有自带的几个拦截器，每次执行请求的时候都会添加到一个 List 中，用户添加的放在最前边
 
-- OkHttp 自带的拦截器中有一个 `BridgeInterceptor` 他会做一个事情是：检查 Request Header 中是否有 `Accept-Encoding` ，没有的话会添加，并且设置成 `gzip` (**但是在官方文档中看到有 `BrotliInterceptor` 替代了，需要详细查一下[BrotliInterceptor](https://square.github.io/okhttp/4.x/okhttp-brotli/okhttp3.brotli/-brotli-interceptor/)**)
+- OkHttp 自带的拦截器中有一个 `BridgeInterceptor` 他会做一个事情是：检查 Request Header 中是否有 `Accept-Encoding` ，没有的话会添加，并且设置成 `gzip` 
 
 综上，打印log还是放到 Network Interceptors 比较合适
 
 
-## 在 Header 中添加一些自定义的头
+### 在 Header 中添加一些自定义的头
 
 老规矩，先放代码
 
@@ -91,5 +91,46 @@ class HeaderInterceptor implements Interceptor {
 在这个方法里，可以修改 Request 也可以修改 Response
 
 然后在 OkHttp Client 中加上自己的拦截器就生效了
+
+
+### OkHttp 内置的 interceptor
+
+##### BridgeInterceptor
+
+这个就不上代码了，这是 OkHttp 自己的代码
+
+这个拦截器大体上做的事情就是
+
+- 检查 Request Body 是否存在，存在的话取到他的类型，放到 `Content-Type` header 里
+- 检查 Request Body 的 `body.contentLength()`，有值就放到 `Content-Length` header 里，并删除 header 中的 `Transfer-Encoding`，不然就删除 `Content-Length` 设置 `Transfer-Encoding: chunked`
+- 检查 Request Header 的 `Connection` ，没有的话设置成 `Keep-Alive`
+- 重头戏来了，检查 Request Header 中 `Accept-Encoding` 和 `Range`，都没设置的话，就设置 `Accept-Encoding: gzip`
+- 其他的不太重要就不一一叙述了，比如设置 `Cookie`, `User-Agent`
+- 同样，对设置了 `Accept-Encoding: gzip` 的请求，用 gzip 处理 Response
+
+
+##### BrotliInterceptor
+
+[项目链接](https://github.com/square/okhttp/tree/master/okhttp-brotli)
+
+介绍
+```
+This module is an implementation of Brotli compression.
+It enables Brotli support in addition to tranparent Gzip support, provided Accept-Encoding is not set previously. Modern web servers must choose to return Brotli responses. n.b. It is not used for sending requests.
+```
+
+与 `BridgeInterceptor` 类似，也是需要用户不手动指定 `Accept-Encoding` 才会启用
+
+这个项目只有一个文件 [BrotliInterceptor.kt](https://github.com/square/okhttp/blob/master/okhttp-brotli/src/main/java/okhttp3/brotli/BrotliInterceptor.kt)
+
+实现的逻辑也很简单，就是在请求头中添加 `Accept-Encoding: br,gzip`，然后在 Response 时处理一下
+
+关于 [Brotli](https://github.com/google/brotli)
+
+```
+Brotli is a generic-purpose lossless compression algorithm that compresses data using a combination of a modern variant of the LZ77 algorithm, Huffman coding and 2nd order context modeling, with a compression ratio comparable to the best currently available general-purpose compression methods. It is similar in speed with deflate but offers more dense compression.
+```
+
+又是谷歌搞得一个压缩算法，据说压缩比远远高于 gzip
 
 [回到目录](README.md)
