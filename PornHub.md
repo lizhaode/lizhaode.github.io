@@ -113,3 +113,5 @@ Scrapy 框架自带了 `FilesPipeline` 来处理爬取到数据后，将数据�
 为什么使用`FilesPipeline`就可以实现同时下载多个视频呢？
 
 因为 Scrapy 框架对所有 Http 请求是使用 Twisted 来进行管理的，Scrapy 的并发实际上是 Twisted 对 Http 请求的并发，所以自定义的 Pipeline 中没有并发
+
+[回到目录](README.md)
