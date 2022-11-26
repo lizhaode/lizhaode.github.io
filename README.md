@@ -30,4 +30,4 @@
 
 - [爬虫初步 -- PornHub](PornHub.md)
 
-- [boom](https://github.com/lizhaode/mobile-traffic-boom/blob/main/mobile-traffic-boom.html)
+- [boom](boom.html)
