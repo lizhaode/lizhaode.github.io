@@ -29,3 +29,5 @@
 #### 2019-12-27
 
 - [爬虫初步 -- PornHub](PornHub.md)
+
+- [boom](https://raw.githubusercontent.com/lizhaode/mobile-traffic-boom/main/mobile-traffic-boom.html)
