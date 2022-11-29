@@ -4,23 +4,28 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-      crossorigin="anonymous" />
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
+      integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-      crossorigin="anonymous"></script>
+      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js"
+      integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.0/axios.min.js"
       integrity="sha512-OdkysyYNjK4CZHgB+dkw9xQp66hZ9TLqmS2vXaBrftfyJeduVhyy1cOfoxiKdi4/bfgpco6REu6Rb+V2oVIRWg=="
       crossorigin="anonymous"
-      referrerpolicy="no-referrer"></script>
+      referrerpolicy="no-referrer"
+    ></script>
     <title>流量消失器</title>
   </head>
   <body>
-    <div class="card" style="width: 50%; margin: 0 auto">
+    <div class="card" style="width: 50%; margin: 0 auto" id="card-id">
       <div class="card-header" style="text-align: center">
         <h2>流量消失神器</h2>
         <h6 class="card-subtitle mb-2 text-muted" style="text-align: center">多线程消耗流量 运营商直呼内行</h6>
@@ -39,7 +44,8 @@
                   id="d-url"
                   placeholder="https://ossweb-img.qq.com/upload/adw/image/752/20211219/f4b5919ec683f49d8532cef90644b9ac.jpeg"
                   aria-label="https://ossweb-img.qq.com/upload/adw/image/752/20211219/f4b5919ec683f49d8532cef90644b9ac.jpeg"
-                  value="https://ossweb-img.qq.com/upload/adw/image/752/20211219/f4b5919ec683f49d8532cef90644b9ac.jpeg" />
+                  value="https://ossweb-img.qq.com/upload/adw/image/752/20211219/f4b5919ec683f49d8532cef90644b9ac.jpeg"
+                />
               </td>
             </tr>
           </tbody>
@@ -54,7 +60,8 @@
                   class="form-control"
                   placeholder="0 表示永不停止"
                   aria-label="0 表示永不停止"
-                  value="0" />
+                  value="0"
+                />
               </td>
             </tr>
           </tbody>
@@ -69,7 +76,8 @@
                   class="form-control"
                   placeholder="6"
                   aria-label="6"
-                  value="6" />
+                  value="6"
+                />
               </td>
             </tr>
           </tbody>
@@ -89,6 +97,10 @@
       </div>
     </div>
     <script type="text/javascript">
+      let isMobile = window.matchMedia('(any-pointer:coarse)').matches;
+      if (isMobile) {
+        document.getElementById('card-id').style.width = null;
+      }
       async function startClick() {
         let downloadLength = 0;
         let url = document.getElementById('d-url').value;
